@@ -1,3 +1,5 @@
+project(rpcz)
+
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
 if (NOT CMAKE_BUILD_TYPE)
