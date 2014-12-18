@@ -1,4 +1,10 @@
+cmake_minimum_required (VERSION 2.8.10)
+
 project(rpcz)
+
+set(RPCZ_MAJOR_VERSION 1)
+set(RPCZ_MINOR_VERSION 0)
+set(RPCZ_PATCH_VERSION 0)
 
 set(CMAKE_MODULE_PATH ${PROJECT_SOURCE_DIR}/cmake_modules)
 
@@ -35,8 +41,6 @@ include_directories(${Boost_INCLUDE_DIRS})
 include_directories(${PROJECT_SOURCE_DIR}/include)
 include_directories(${PROJECT_BINARY_DIR}/src)
 
-cmake_minimum_required (VERSION 2.8.10)
-
 if(MSVC)
     add_definitions("/W3 /wd4996")
     set(CMAKE_DEBUG_POSTFIX "_d")
@@ -62,3 +66,29 @@ endif(rpcz_build_examples)
 file(GLOB RPCZ_PUBLIC_HEADERS include/rpcz/*.hpp)
 install(FILES ${RPCZ_PUBLIC_HEADERS} DESTINATION include/rpcz)
 install(FILES ${PROJECT_BINARY_DIR}/src/rpcz/rpcz.pb.h DESTINATION include/rpcz)
+
+###########################################################
+# PACKAGE GENERATION
+###########################################################
+
+# Package target
+set(CPACK_PACKAGE_NAME "rpcz")
+set(CPACK_PACKAGE_VENDOR "Nadav Samet")
+set(CPACK_PACKAGE_DESCRIPTION_SUMMARY "RPC implementation for Protocol Buffers over ZeroMQ")
+set(CPACK_PACKAGE_VERSION_MAJOR "${RPCZ_MAJOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_MINOR "${RPCZ_MINOR_VERSION}")
+set(CPACK_PACKAGE_VERSION_PATCH "${RPCZ_PATCH_VERSION}")
+
+if(UNIX)
+    # Debian package specific config
+    set(CPACK_GENERATOR "DEB")
+    set(CPACK_DEBIAN_PACKAGE_MAINTAINER "Philippe Hamelin")
+    set(CPACK_DEBIAN_PACKAGE_DEPENDS "libzmq3, libprotobuf8, protobuf-compiler, protobuf-c-compiler")
+elseif(WIN32)
+    set(CPACK_GENERATOR "ZIP")
+endif()
+
+if(CPACK_GENERATOR)
+    include(CPack)
+endif(CPACK_GENERATOR)
+
